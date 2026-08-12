@@ -2,7 +2,7 @@ name: Update PC Game RSS
 
 on:
   schedule:
-    - cron: "17,47 * * * *"
+    - cron: "0,30 * * * *"
       timezone: "Asia/Tokyo"
   workflow_dispatch:
 
