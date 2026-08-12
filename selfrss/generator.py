@@ -12,7 +12,6 @@ from selfrss.validation import validate_article_freshness, validate_rss
 
 GAMEWATCH_FILENAME = "gamewatch-pc.xml"
 GAMEWITH_FILENAME = "gamewith-pc.xml"
-DENFAMI_FILENAME = "denfami-steam.xml"
 DEPLOYMENT_FILENAME = "deployment.txt"
 
 
@@ -26,7 +25,7 @@ def _stage_file(directory: Path, data: bytes) -> Path:
     return path
 
 
-def _replace_all(staged: dict[Path, Path]) -> None:
+def _replace_pair(staged: dict[Path, Path]) -> None:
     backups = {target: target.read_bytes() if target.exists() else None for target in staged}
     replaced: list[Path] = []
     try:
@@ -50,7 +49,6 @@ def _replace_all(staged: dict[Path, Path]) -> None:
 def write_feed_files(
     gamewatch_articles: Sequence[Article],
     gamewith_articles: Sequence[Article],
-    denfami_articles: Sequence[Article],
     output_dir: Path,
     base_url: str | None,
     built_at: datetime,
@@ -59,11 +57,9 @@ def write_feed_files(
 ) -> dict[str, int]:
     validate_article_freshness(gamewatch_articles, now=built_at)
     validate_article_freshness(gamewith_articles, now=built_at)
-    validate_article_freshness(denfami_articles, now=built_at)
 
     gamewatch_self = urljoin(base_url, GAMEWATCH_FILENAME) if base_url else None
     gamewith_self = urljoin(base_url, GAMEWITH_FILENAME) if base_url else None
-    denfami_self = urljoin(base_url, DENFAMI_FILENAME) if base_url else None
     gamewatch_xml = render_rss(
         "GAME Watch - PCゲーム RSS",
         "https://game.watch.impress.co.jp/category/pc/pc/",
@@ -80,14 +76,6 @@ def write_feed_files(
         gamewith_self,
         built_at,
     )
-    denfami_xml = render_rss(
-        "電ファミニコゲーマー - Steam RSS",
-        "https://news.denfaminicogamer.jp/tag/steam",
-        "電ファミニコゲーマーのSteam関連記事をまとめた非公式RSSフィード",
-        denfami_articles,
-        denfami_self,
-        built_at,
-    )
     gamewatch_count = validate_rss(
         gamewatch_xml,
         expected_host="game.watch.impress.co.jp",
@@ -100,18 +88,11 @@ def write_feed_files(
         minimum=minimum,
         maximum=minimum,
     )
-    denfami_count = validate_rss(
-        denfami_xml,
-        expected_host="news.denfaminicogamer.jp",
-        minimum=minimum,
-        maximum=minimum,
-    )
 
     output_dir.mkdir(parents=True, exist_ok=True)
     targets = {
         output_dir / GAMEWATCH_FILENAME: _stage_file(output_dir, gamewatch_xml),
         output_dir / GAMEWITH_FILENAME: _stage_file(output_dir, gamewith_xml),
-        output_dir / DENFAMI_FILENAME: _stage_file(output_dir, denfami_xml),
     }
     if deployment_id is not None:
         if not deployment_id.strip() or "\n" in deployment_id or "\r" in deployment_id:
@@ -120,9 +101,5 @@ def write_feed_files(
             output_dir,
             f"{deployment_id}\n".encode(),
         )
-    _replace_all(targets)
-    return {
-        "GAME Watch": gamewatch_count,
-        "GameWith": gamewith_count,
-        "Denfami": denfami_count,
-    }
+    _replace_pair(targets)
+    return {"GAME Watch": gamewatch_count, "GameWith": gamewith_count}

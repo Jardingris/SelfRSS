@@ -7,7 +7,6 @@ import sys
 import requests
 
 from selfrss.errors import ExtractionError
-from selfrss.denfami import collect_denfami
 from selfrss.gamewatch import collect_gamewatch
 from selfrss.gamewith import collect_gamewith
 from selfrss.generator import write_feed_files
@@ -16,10 +15,7 @@ from selfrss.http import HttpClient, RobotsDenied
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description=(
-            "Generate unofficial PC game RSS feeds from GAME Watch, GameWith, "
-            "and Denfaminicogamer."
-        )
+        description="Generate unofficial PC game RSS feeds from GAME Watch and GameWith."
     )
     parser.add_argument("--output-dir", type=Path, default=Path("site"))
     parser.add_argument("--base-url", help="Published GitHub Pages base URL")
@@ -35,11 +31,9 @@ def main() -> int:
         client = HttpClient()
         gamewatch_articles = collect_gamewatch(client, args.limit, minimum)
         gamewith_articles = collect_gamewith(client, args.limit, minimum)
-        denfami_articles = collect_denfami(client, args.limit, minimum)
         counts = write_feed_files(
             gamewatch_articles,
             gamewith_articles,
-            denfami_articles,
             args.output_dir,
             args.base_url,
             built_at,
@@ -53,18 +47,15 @@ def main() -> int:
     for source, articles in (
         ("GAME Watch", gamewatch_articles),
         ("GameWith", gamewith_articles),
-        ("Denfami", denfami_articles),
     ):
         print(f"[{source}]")
         for article in articles[:5]:
-            timestamp = article.published or article.listed_at
-            displayed_at = timestamp.isoformat() if timestamp else "datetime unavailable"
-            print(f"{displayed_at} | {article.title}")
+            published = article.published.isoformat() if article.published else "datetime unavailable"
+            print(f"{published} | {article.title}")
             print(article.url)
         print()
     print(f"GAME Watch: {counts['GAME Watch']} items")
     print(f"GameWith: {counts['GameWith']} items")
-    print(f"Denfami: {counts['Denfami']} items")
     print("RSS parse: OK")
     return 0
 
