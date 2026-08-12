@@ -8,14 +8,6 @@ GAME WatchとGameWithのPCゲームカテゴリ、電ファミニコゲーマー
 - 各フィードは新しい順に40件、同一URLを除外
 - 記事の概要、本文、画像は複製しない
 
-## 公開フィード
-
-- `https://jardingris.github.io/SelfRSS/gamewatch-pc.xml`
-- `https://jardingris.github.io/SelfRSS/gamewith-pc.xml`
-- `https://jardingris.github.io/SelfRSS/denfami-steam.xml`
-
-公開ページ: `https://jardingris.github.io/SelfRSS/`
-
 このリポジトリは各配信元の公式サービスではない。記事とサイトの権利は各配信元に帰属する。
 
 ## ローカル実行
@@ -33,7 +25,7 @@ python3 -m venv .venv
 ```bash
 .venv/bin/python make_rss.py \
   --output-dir site \
-  --base-url https://jardingris.github.io/SelfRSS/ \
+  --base-url https://example.github.io/SelfRSS/ \
   --limit 40
 ```
 
@@ -57,7 +49,7 @@ SELFRSS_LIVE=1 .venv/bin/python -m unittest tests.test_live -v
 
 ```bash
 .venv/bin/python verify_public.py \
-  --base-url https://jardingris.github.io/SelfRSS/ \
+  --base-url https://example.github.io/SelfRSS/ \
   --minimum 40
 ```
 
@@ -73,10 +65,6 @@ SELFRSS_LIVE=1 .venv/bin/python -m unittest tests.test_live -v
 生成XMLはコミットせず、ActionsのPages artifactとして配信する。パスワード、API token、Feedly認証情報は使わない。
 
 公開リポジトリで60日間活動がない場合、GitHubはscheduled workflowを自動停止することがある。その場合はActions画面からworkflowを有効化し、`Run workflow` で手動実行する。
-
-## FeedlyとNetNewsWire
-
-Feedlyの `Follow Sources` に上記XML URLを1本ずつ入力してフォローする。NetNewsWire側で同じFeedlyアカウントを追加すると購読が同期される。FeedlyやNetNewsWireの認証情報はこのリポジトリへ保存しない。
 
 ## 構成
 
