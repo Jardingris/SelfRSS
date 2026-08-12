@@ -9,6 +9,7 @@ from selfrss.urls import normalize_article_url, require_https_origin
 
 
 GAMEWITH_HOST = "gamewith.jp"
+GAMEWITH_LANDING_HOST = "lp.gamewith.jp"
 GAMEWITH_URL = "https://gamewith.jp/pc/news"
 GAMEWITH_ROBOTS_URL = "https://gamewith.jp/robots.txt"
 MAX_PAGES = 10
@@ -33,6 +34,12 @@ def parse_gamewith_page(html: str, page_url: str) -> ParsedPage:
             raise ExtractionError("GameWith card is missing title or URL")
 
         url = normalize_article_url(link["href"], page_url)
+        if urlsplit(url).hostname == GAMEWITH_LANDING_HOST:
+            try:
+                require_https_origin(url, GAMEWITH_LANDING_HOST)
+            except ValueError:
+                raise ExtractionError(f"GameWith card has unexpected host: {url}")
+            continue
         try:
             require_https_origin(url, GAMEWITH_HOST)
         except ValueError:

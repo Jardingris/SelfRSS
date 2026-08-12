@@ -103,6 +103,29 @@ class CollectorTests(unittest.TestCase):
         self.assertEqual([article.title for article in articles], ["一", "二", "三"])
         self.assertEqual(client.robots_checked, [GAMEWITH_URL, page2])
 
+    def test_gamewith_skips_landing_page_card_and_keeps_collecting(self) -> None:
+        page2 = "https://gamewith.jp/pc/news?p=2"
+        client = FakeClient(
+            {
+                GAMEWITH_URL: gamewith_page(
+                    [
+                        ("キャンペーン", "https://lp.gamewith.jp/NTE/vtuber_vol3"),
+                        ("一", "/gamedb/1"),
+                    ],
+                    "/pc/news?p=2",
+                ),
+                page2: gamewith_page([("二", "/gamedb/2")]),
+            }
+        )
+
+        try:
+            articles = collect_gamewith(client, limit=2, minimum=2)
+        except ExtractionError as error:
+            self.fail(f"known landing-page card was not skipped: {error}")
+
+        self.assertEqual([article.title for article in articles], ["一", "二"])
+        self.assertEqual(client.requested, [GAMEWITH_URL, page2])
+
     def test_rejects_too_few_articles(self) -> None:
         client = FakeClient({GAMEWITH_URL: gamewith_page([("一", "/gamedb/1")])})
 

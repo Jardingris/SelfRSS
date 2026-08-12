@@ -58,6 +58,24 @@ class GameWithParserTests(unittest.TestCase):
         with self.assertRaisesRegex(ExtractionError, "datetime"):
             parse_gamewith_page(broken, "https://gamewith.jp/pc/news")
 
+    def test_rejects_unknown_external_card_host(self) -> None:
+        broken = GAMEWITH_HTML.replace(
+            "/gamedb/18014/articles/61757?utm_medium=rss",
+            "https://example.com/article",
+        )
+
+        with self.assertRaisesRegex(ExtractionError, "unexpected host"):
+            parse_gamewith_page(broken, "https://gamewith.jp/pc/news")
+
+    def test_rejects_insecure_landing_page_url(self) -> None:
+        broken = GAMEWITH_HTML.replace(
+            "/gamedb/18014/articles/61757?utm_medium=rss",
+            "http://lp.gamewith.jp/NTE/vtuber_vol3",
+        )
+
+        with self.assertRaisesRegex(ExtractionError, "unexpected host"):
+            parse_gamewith_page(broken, "https://gamewith.jp/pc/news")
+
 
 if __name__ == "__main__":
     unittest.main()
