@@ -61,7 +61,7 @@ SELFRSS_LIVE=1 .venv/bin/python -m unittest tests.test_live -v
 
 ## GitHub ActionsとPages
 
-`.github/workflows/update-rss.yml` は日本時間の毎時00分・30分（30分間隔）と手動実行で動く。
+`.github/workflows/update-rss.yml` は日本時間の毎時15分・45分（30分間隔）と手動実行で動く。
 
 1. unit test
 2. 実サイトから40件ずつ取得し、RSSを生成・検証
