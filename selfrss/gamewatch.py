@@ -54,13 +54,10 @@ def parse_gamewatch_page(html: str, page_url: str) -> ParsedPage:
         except ValueError as error:
             raise ExtractionError("GAME Watch card has invalid listed date") from error
 
-        outline = card.select_one("p.outline")
-        description = _clean_text(outline) if outline else None
         articles.append(
             Article(
                 title=_clean_text(title_link),
                 url=url,
-                description=description or None,
                 listed_at=listed_at,
             )
         )

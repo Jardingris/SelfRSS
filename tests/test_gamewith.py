@@ -40,7 +40,6 @@ class GameWithParserTests(unittest.TestCase):
             page.articles[0].published,
             datetime.fromisoformat("2026-08-12T02:30+09:00"),
         )
-        self.assertIsNone(page.articles[0].description)
         self.assertEqual(page.next_url, "https://gamewith.jp/pc/news?p=2")
 
     def test_rejects_missing_news_container(self) -> None:

@@ -2,10 +2,10 @@
 
 GAME WatchとGameWithのPCゲームカテゴリから、個人利用向けの非公式RSS 2本を生成してGitHub Pagesで配信する。
 
-- GAME Watch: タイトル、記事URL、公式RSSで対応できる公開日時、一覧の概要
+- GAME Watch: タイトル、記事URL、公式RSSで対応できる公開日時
 - GameWith: タイトル、記事URL、公開日時
 - 各フィードは新しい順に40件、同一URLを除外
-- 記事本文や画像は複製しない
+- 記事の概要、本文、画像は複製しない
 
 ## 公開フィード
 

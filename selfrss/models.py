@@ -7,7 +7,6 @@ class Article:
     title: str
     url: str
     published: datetime | None = None
-    description: str | None = None
     listed_at: datetime | None = None
 
 

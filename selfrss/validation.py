@@ -55,6 +55,8 @@ def validate_rss(
 
     seen: set[str] = set()
     for item in items:
+        if item.find("description") is not None:
+            raise ExtractionError("RSS item description is not allowed")
         title = (item.findtext("title") or "").strip()
         link = (item.findtext("link") or "").strip()
         guid = (item.findtext("guid") or "").strip()

@@ -46,7 +46,6 @@ class GameWatchParserTests(unittest.TestCase):
             page.articles[0].url,
             "https://game.watch.impress.co.jp/docs/news/123.html",
         )
-        self.assertEqual(page.articles[0].description, "短い概要 & 説明")
         self.assertIsNone(page.articles[0].published)
         self.assertEqual(
             page.articles[0].listed_at,

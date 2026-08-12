@@ -16,7 +16,6 @@ class RssTests(unittest.TestCase):
                 title='A & B <特集>',
                 url="https://example.com/article/1",
                 published=datetime.fromisoformat("2026-08-12T10:09:17+09:00"),
-                description='短い概要 & "説明"',
             ),
             Article(
                 title="日時なし",
@@ -24,7 +23,7 @@ class RssTests(unittest.TestCase):
             ),
         ]
 
-    def test_renders_valid_rss_with_optional_item_fields(self) -> None:
+    def test_renders_valid_rss_without_item_descriptions(self) -> None:
         xml = render_rss(
             channel_title="PC Game RSS",
             channel_url="https://example.com/source",
@@ -47,7 +46,7 @@ class RssTests(unittest.TestCase):
         items = channel.findall("item")
         self.assertEqual(len(items), 2)
         self.assertEqual(items[0].findtext("title"), 'A & B <特集>')
-        self.assertEqual(items[0].findtext("description"), '短い概要 & "説明"')
+        self.assertIsNone(items[0].find("description"))
         self.assertEqual(items[0].findtext("guid"), self.articles[0].url)
         self.assertEqual(items[0].find("guid").attrib["isPermaLink"], "true")
         self.assertEqual(
@@ -57,6 +56,25 @@ class RssTests(unittest.TestCase):
         self.assertIsNone(items[1].find("description"))
         self.assertIsNone(items[1].find("pubDate"))
         self.assertEqual(validate_rss(xml, expected_host="example.com", minimum=2), 2)
+
+    def test_validation_rejects_item_description(self) -> None:
+        xml = b"""<?xml version="1.0" encoding="utf-8"?>
+        <rss version="2.0"><channel>
+          <title>PC Game RSS</title>
+          <link>https://example.com/source</link>
+          <description>channel description</description>
+          <language>ja</language>
+          <lastBuildDate>Wed, 12 Aug 2026 11:00:00 +0900</lastBuildDate>
+          <item>
+            <title>article</title>
+            <link>https://example.com/article/1</link>
+            <guid isPermaLink="true">https://example.com/article/1</guid>
+            <description>copied outline</description>
+          </item>
+        </channel></rss>"""
+
+        with self.assertRaisesRegex(ExtractionError, "description"):
+            validate_rss(xml, expected_host="example.com", minimum=1)
 
     def test_omits_atom_self_when_base_url_is_unknown(self) -> None:
         xml = render_rss(

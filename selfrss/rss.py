@@ -48,7 +48,5 @@ def render_rss(
             if article.published.tzinfo is None:
                 raise ValueError("article published datetime must include timezone")
             ET.SubElement(item, "pubDate").text = format_datetime(article.published)
-        if article.description:
-            ET.SubElement(item, "description").text = article.description
 
     return ET.tostring(root, encoding="utf-8", xml_declaration=True)
