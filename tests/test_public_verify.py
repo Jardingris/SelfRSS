@@ -48,7 +48,7 @@ def make_feed(host: str, count: int) -> bytes:
 
 
 class PublicVerifyTests(unittest.TestCase):
-    def test_verifies_index_and_both_public_feeds(self) -> None:
+    def test_verifies_index_and_all_public_feeds(self) -> None:
         base = "https://jardingris.github.io/SelfRSS/"
         session = FakeSession(
             {
@@ -62,6 +62,10 @@ class PublicVerifyTests(unittest.TestCase):
                     make_feed("gamewith.jp", 40),
                     "application/rss+xml; charset=utf-8",
                 ),
+                f"{base}denfami-steam.xml?deployment=12345-2": FakeResponse(
+                    make_feed("news.denfaminicogamer.jp", 40),
+                    "application/xml",
+                ),
             }
         )
 
@@ -74,6 +78,7 @@ class PublicVerifyTests(unittest.TestCase):
 
         self.assertEqual(result["gamewatch-pc.xml"], 40)
         self.assertEqual(result["gamewith-pc.xml"], 40)
+        self.assertEqual(result["denfami-steam.xml"], 40)
 
     def test_rejects_html_served_for_feed(self) -> None:
         base = "https://jardingris.github.io/SelfRSS/"

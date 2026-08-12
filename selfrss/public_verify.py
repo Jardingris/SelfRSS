@@ -11,6 +11,7 @@ from selfrss.validation import validate_rss
 FEEDS: Mapping[str, str] = {
     "gamewatch-pc.xml": "game.watch.impress.co.jp",
     "gamewith-pc.xml": "gamewith.jp",
+    "denfami-steam.xml": "news.denfaminicogamer.jp",
 }
 XML_CONTENT_TYPES = ("application/xml", "application/rss+xml", "text/xml")
 
