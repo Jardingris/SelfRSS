@@ -14,13 +14,19 @@ def validate_article_freshness(
 ) -> None:
     if now.tzinfo is None:
         raise ValueError("now must include timezone")
-    published = [article.published for article in articles if article.published is not None]
-    if not published:
+    timestamps = [
+        article.published for article in articles if article.published is not None
+    ]
+    if not timestamps:
+        timestamps = [
+            article.listed_at for article in articles if article.listed_at is not None
+        ]
+    if not timestamps:
         raise ExtractionError("feed has no article with a known datetime")
-    if any(value.tzinfo is None for value in published):
+    if any(value.tzinfo is None for value in timestamps):
         raise ExtractionError("article datetime must include timezone")
 
-    latest = max(published)
+    latest = max(timestamps)
     if latest < now - timedelta(days=14):
         raise ExtractionError("latest article is older than 14 days")
     if latest > now + timedelta(hours=24):
