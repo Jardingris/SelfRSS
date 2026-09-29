@@ -67,6 +67,27 @@ class GameWithParserTests(unittest.TestCase):
         with self.assertRaisesRegex(ExtractionError, "unexpected host"):
             parse_gamewith_page(broken, "https://gamewith.jp/pc/news")
 
+    def test_upgrades_gamewith_gaming_pc_article_link_to_https(self) -> None:
+        page_html = GAMEWITH_HTML.replace(
+            "/gamedb/18014/articles/61757?utm_medium=rss",
+            "http://gamewith.jp/gaming-pc/article/show/578916",
+        )
+
+        page = parse_gamewith_page(page_html, "https://gamewith.jp/pc/news")
+        self.assertEqual(
+            page.articles[0].url,
+            "https://gamewith.jp/gaming-pc/article/show/578916",
+        )
+
+    def test_rejects_other_insecure_gamewith_article_link(self) -> None:
+        broken = GAMEWITH_HTML.replace(
+            "/gamedb/18014/articles/61757?utm_medium=rss",
+            "http://gamewith.jp/gamedb/18014/articles/61757",
+        )
+
+        with self.assertRaisesRegex(ExtractionError, "unexpected host"):
+            parse_gamewith_page(broken, "https://gamewith.jp/pc/news")
+
     def test_rejects_insecure_landing_page_url(self) -> None:
         broken = GAMEWITH_HTML.replace(
             "/gamedb/18014/articles/61757?utm_medium=rss",

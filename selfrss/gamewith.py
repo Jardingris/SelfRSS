@@ -34,6 +34,8 @@ def parse_gamewith_page(html: str, page_url: str) -> ParsedPage:
             raise ExtractionError("GameWith card is missing title or URL")
 
         url = normalize_article_url(link["href"], page_url)
+        if url.startswith("http://gamewith.jp/gaming-pc/article/show/"):
+            url = "https://" + url.removeprefix("http://")
         if urlsplit(url).hostname == GAMEWITH_LANDING_HOST:
             try:
                 require_https_origin(url, GAMEWITH_LANDING_HOST)
