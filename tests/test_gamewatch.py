@@ -9,6 +9,7 @@ GAMEWATCH_HTML = """
   <section class="latest"><a href="/docs/news/999.html">対象外</a></section>
   <section class="list"><div class="article list wrap"><ul class="list-02">
     <li class="item ad native"></li>
+    <li class="item ad"><div id="gpt-div-pc-hyb004"></div></li>
     <li class="item news">
       <div class="image"><a href="/docs/news/123.html"><img></a></div>
       <div class="text">

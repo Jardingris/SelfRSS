@@ -32,7 +32,7 @@ def parse_gamewatch_page(html: str, page_url: str) -> ParsedPage:
     articles: list[Article] = []
     for card in containers[0].find_all("li", class_="item", recursive=False):
         classes = set(card.get("class", []))
-        if {"ad", "native"}.issubset(classes):
+        if "ad" in classes:
             continue
         title_link = card.select_one("p.title > a[href]")
         if title_link is None or not _clean_text(title_link):
